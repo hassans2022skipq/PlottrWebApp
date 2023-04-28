@@ -10,6 +10,7 @@ const upload = multer({ dest: 'uploads/' }); // Set destination folder for uploa
 const { protect } = require('./middleware/auth');
 const User = require('./models/User');
 const Story = require('./models/Story');
+const Comment = require('./models/Comment');
 const { registerSchema, loginSchema } = require('./schemas/userSchema');
 // const { storySchema } = require('./schemas/storySchema');
 require('dotenv').config();
@@ -274,6 +275,37 @@ app.put('/stories/:id/upvote', protect, async (req, res) => {
         console.log(error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
+});
+
+// Add a comment to a story
+router.post('/stories/:storyId/comments', auth, async (req, res) => {
+    try {
+        const comment = new Comment({
+            user: req.user._id,
+            story: req.params.storyId,
+            body: req.body.body
+        });
+        await comment.save();
+        res.status(201).send(comment);
+    } catch (e) {
+        res.status(400).send(e);
+    }
+});
+
+// delete a comment
+app.delete('/comments/:id', (req, res) => {
+    const { id } = req.params;
+
+    Comment.findByIdAndDelete(id, (err, comment) => {
+        if (err) {
+            console.error(err);
+            res.status(500).send('Error deleting comment');
+        } else if (!comment) {
+            res.status(404).send('Comment not found');
+        } else {
+            res.send(comment);
+        }
+    });
 });
 
 // Start the server
