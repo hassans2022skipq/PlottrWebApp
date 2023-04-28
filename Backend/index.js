@@ -11,7 +11,7 @@ const { protect } = require('./middleware/auth');
 const User = require('./models/User');
 const Story = require('./models/Story');
 const Comment = require('./models/Comment');
-const { registerSchema, loginSchema } = require('./schemas/userSchema');
+const { registrationSchema, loginSchema } = require('./schemas/userSchema');
 // const { storySchema } = require('./schemas/storySchema');
 require('dotenv').config();
 
@@ -33,7 +33,7 @@ const port = 3000;
 app.post('/register', async (req, res) => {
     try {
         // Validate the request body
-        const { error } = registerSchema.validate(req.body);
+        const { error } = registrationSchema.validate(req.body);
         if (error) {
             return res.status(400).json({ message: error.details[0].message });
         }
@@ -119,8 +119,12 @@ app.get('/logout', protect, (req, res) => {
 // Get User Details
 app.get('/user', protect, async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select('-password');
-        res.status(200).json({ user });
+        if (!req.user) {
+            return res.status(401).json({ message: 'Unauthorized' });
+        }
+        const user = await User.findById(req.userId).select('-password');
+        const stories = await Story.find({ user: req.userId }).populate('user', '-password');
+        res.status(200).json({ user, stories });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Internal Server Error' });
@@ -236,7 +240,7 @@ app.delete('/stories/:id', protect, async (req, res) => {
 });
 
 // PUT /api/stories/:id/public
-app.put('/stories/:id/public', async (req, res) => {
+app.put('/stories/:id/public', protect, async (req, res) => {
     try {
         const story = await Story.findById(req.params.id);
 
@@ -278,7 +282,7 @@ app.put('/stories/:id/upvote', protect, async (req, res) => {
 });
 
 // Add a comment to a story
-router.post('/stories/:storyId/comments', auth, async (req, res) => {
+app.post('/stories/:storyId/comments', protect, async (req, res) => {
     try {
         const comment = new Comment({
             user: req.user._id,
@@ -292,8 +296,23 @@ router.post('/stories/:storyId/comments', auth, async (req, res) => {
     }
 });
 
+// Get all comments for a story
+app.get('/story/:id/comments', protect, async (req, res) => {
+    try {
+        const story = await Story.findById(req.params.id);
+        if (!story) {
+            return res.status(404).json({ message: 'Story not found' });
+        }
+        const comments = await Comment.find({ story: story._id });
+        return res.status(200).json(comments);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Server error' });
+    }
+});
+
 // delete a comment
-app.delete('/comments/:id', (req, res) => {
+app.delete('/comments/:id', protect, (req, res) => {
     const { id } = req.params;
 
     Comment.findByIdAndDelete(id, (err, comment) => {
