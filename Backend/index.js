@@ -5,14 +5,26 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' }); // Set destination folder for uploaded files
 const { protect } = require('./middleware/auth');
 const User = require('./models/User');
 const Story = require('./models/Story');
 const Comment = require('./models/Comment');
 const { registrationSchema, loginSchema } = require('./schemas/userSchema');
 // const { storySchema } = require('./schemas/storySchema');
+
+const multer = require('multer');
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'uploads/')
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '-' + (file.originalname).toLowerCase())
+    }
+});
+
+// create Multer middleware with storage engine
+const upload = multer({ storage: storage });
+
 require('dotenv').config();
 
 const app = express();
@@ -143,7 +155,7 @@ app.post('/stories', upload.single('file'), protect, async (req, res) => {
             content,
             isPublic,
             fileUrl: `/uploads/${filename}`,
-            user: req.user._id // Set the user ID to the currently logged-in user
+            user: req.userId // Set the user ID to the currently logged-in user
         });
         const savedStory = await newStory.save();
 

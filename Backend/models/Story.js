@@ -9,9 +9,8 @@ const storySchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  type: {
+  fileUrl: {
     type: String,
-    enum: ['text', 'image', 'video'],
     required: true
   },
   isPublic: {
