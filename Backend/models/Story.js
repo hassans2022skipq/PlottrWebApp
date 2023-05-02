@@ -17,11 +17,16 @@ const storySchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  upvotes: {
-    type: Number,
-    default: 0
-  },
+  upvotes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }
+  ],
   createdBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  },
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },

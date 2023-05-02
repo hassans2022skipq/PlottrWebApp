@@ -18,7 +18,7 @@ const storage = multer.diskStorage({
         cb(null, 'uploads/')
     },
     filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + (file.originalname).toLowerCase())
+        cb(null, Date.now() + '-' + file.originalname)
     }
 });
 
@@ -42,7 +42,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 const port = 3000;
 
 // User Registration
-app.post('/register', async (req, res) => {
+app.post('/register', upload.single('fileUrl'), async (req, res) => {
     try {
         // Validate the request body
         const { error } = registrationSchema.validate(req.body);
@@ -66,12 +66,13 @@ app.post('/register', async (req, res) => {
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
+
         // Create a new user object and save it to the database
         const user = new User({
             username: req.body.username,
             email: req.body.email,
             password: hashedPassword,
-            profilePic: req.body.profilePic
+            fileUrl: `/uploads/${req.file.filename}`,
         });
 
         // Save the user to the database
@@ -144,9 +145,8 @@ app.get('/user', protect, async (req, res) => {
 });
 
 // Create a Story
-app.post('/stories', upload.single('file'), protect, async (req, res) => {
+app.post('/stories', upload.single('fileUrl'), protect, async (req, res) => {
     const { title, content, isPublic } = req.body;
-    const { filename } = req.file;
 
     try {
         // Create a new story
@@ -154,7 +154,7 @@ app.post('/stories', upload.single('file'), protect, async (req, res) => {
             title,
             content,
             isPublic,
-            fileUrl: `/uploads/${filename}`,
+            fileUrl: `/uploads/${req.file.filename}`,
             user: req.userId // Set the user ID to the currently logged-in user
         });
         const savedStory = await newStory.save();
@@ -270,6 +270,18 @@ app.put('/stories/:id/public', protect, async (req, res) => {
     }
 });
 
+// most-liked stories
+app.get('/most-liked', async (req, res) => {
+    try {
+        const stories = await Story.find().sort('-likes').limit(1).populate('user', '-password');
+        res.status(200).json({ story: stories[0] });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
+
 
 // Upvote a Story
 app.put('/stories/:id/upvote', protect, async (req, res) => {
@@ -279,11 +291,11 @@ app.put('/stories/:id/upvote', protect, async (req, res) => {
             return res.status(404).json({ message: 'Story not found' });
         }
 
-        if (story.upvotes.includes(req.user._id)) {
+        if (story.upvotes.includes(req.userId)) {
             return res.status(400).json({ message: 'You have already upvoted this story' });
         }
 
-        story.upvotes.push(req.user._id);
+        story.upvotes.push(req.userId);
         await story.save();
 
         res.status(200).json({ message: 'Upvoted' });
@@ -293,14 +305,38 @@ app.put('/stories/:id/upvote', protect, async (req, res) => {
     }
 });
 
+// Downvote a Story
+app.put('/stories/:id/downvote', protect, async (req, res) => {
+    try {
+        const story = await Story.findById(req.params.id);
+        if (!story) {
+            return res.status(404).json({ message: 'Story not found' });
+        }
+
+        story.upvotes.remove(req.userId);
+        await story.save();
+
+        res.status(200).json({ message: 'Downvoted' });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
 // Add a comment to a story
 app.post('/stories/:storyId/comments', protect, async (req, res) => {
     try {
+        const story = await Story.findById(req.params.storyId);
+        if (!story) {
+            return res.status(404).json({ message: 'Story not found' });
+        }
         const comment = new Comment({
-            user: req.user._id,
+            user: req.userId,
             story: req.params.storyId,
             body: req.body.body
         });
+        story.comments.push({ _id: comment._id });
+        await story.save();
         await comment.save();
         res.status(201).send(comment);
     } catch (e) {
@@ -309,7 +345,7 @@ app.post('/stories/:storyId/comments', protect, async (req, res) => {
 });
 
 // Get all comments for a story
-app.get('/story/:id/comments', protect, async (req, res) => {
+app.get('/stories/:id/comments', protect, async (req, res) => {
     try {
         const story = await Story.findById(req.params.id);
         if (!story) {
@@ -324,20 +360,38 @@ app.get('/story/:id/comments', protect, async (req, res) => {
 });
 
 // delete a comment
-app.delete('/comments/:id', protect, (req, res) => {
+app.delete('/comments/:id', protect, async (req, res) => {
     const { id } = req.params;
 
-    Comment.findByIdAndDelete(id, (err, comment) => {
-        if (err) {
-            console.error(err);
-            res.status(500).send('Error deleting comment');
-        } else if (!comment) {
-            res.status(404).send('Comment not found');
-        } else {
-            res.send(comment);
-        }
-    });
+    const comment = await Comment.findByIdAndDelete(req.params.id);
+    if (!comment) {
+        return res.status(404).json({ message: 'Comment not found' });
+    }
+    comment.save();
+    res.json({ message: 'Comment deleted' });
 });
+
+
+// Search route
+app.get('/search', protect, async (req, res) => {
+    try {
+        const { query } = req.query;
+        const stories = await Story.find({
+            $or: [
+                { title: { $regex: query, $options: 'i' } },
+                { content: { $regex: query, $options: 'i' } }
+            ]
+        }).populate('user', '-password');
+        if (!stories) {
+            return res.status(404).json({ message: 'Not Found' });
+        }
+        res.status(200).json({ stories });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: 'Internal Server Error' });
+    }
+});
+
 
 // Start the server
 app.listen(port, () => {
