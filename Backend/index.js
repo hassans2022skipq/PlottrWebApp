@@ -10,6 +10,7 @@ const User = require('./models/User');
 const Story = require('./models/Story');
 const Comment = require('./models/Comment');
 const { registrationSchema, loginSchema } = require('./schemas/userSchema');
+const Cors = require('cors');
 // const { storySchema } = require('./schemas/storySchema');
 
 const multer = require('multer');
@@ -30,6 +31,7 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
+app.use(Cors());
 
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
@@ -39,7 +41,12 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
     process.exit(1);
 });
 
-const port = 3000;
+const port = 5000;
+
+
+app.get('/', (req, res) => {
+    res.json({ message: 'Api is working' });
+});
 
 // User Registration
 app.post('/register', upload.single('fileUrl'), async (req, res) => {
