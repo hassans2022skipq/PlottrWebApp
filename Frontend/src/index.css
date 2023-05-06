@@ -70,5 +70,8 @@ button:focus-visible {
   .content {
     background: #f2f2f2;
   }
+  Input{
+    color: #333333 !important
+  }
   
 }
