@@ -6,9 +6,9 @@ import { AddIcon } from "@chakra-ui/icons";
 import { Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
-import { Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton } from "@chakra-ui/react";
-import { Text } from "@chakra-ui/react";
+import { Modal, ModalOverlay } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
+import PostModal from "./PostModal";
 
 
 const Header = () => {
@@ -72,16 +72,7 @@ const Header = () => {
             </Button>
             <Modal isCentered isOpen={isOpen} onClose={onClose}>
               {overlay}
-              <ModalContent>
-                <ModalHeader>Modal Title</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                  <Text>Custom backdrop filters!</Text>
-                </ModalBody>
-                <ModalFooter>
-                  <Button>Post</Button>
-                </ModalFooter>
-              </ModalContent>
+              <PostModal />
             </Modal>
 
 
@@ -98,6 +89,14 @@ const Header = () => {
                 />
               </MenuButton>
               <MenuList>
+                <Link to="/home">
+                  <MenuItem _hover={{
+                    border: "1px solid #ffffff",
+                    background: "transparent",
+                    color: "#ED2727"
+                  }
+                  }>Home</MenuItem>
+                </Link>
                 <Link to="/profile">
                   <MenuItem _hover={{
                     border: "1px solid #ffffff",
