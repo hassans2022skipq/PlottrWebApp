@@ -4,7 +4,6 @@ import { AiFillCamera } from 'react-icons/ai'
 import axios from "axios";
 
 const Register = () => {
-    const [file, setFile] = useState(null);
     const hiddenFileInput = useRef(null);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
@@ -15,10 +14,21 @@ const Register = () => {
         profile: null
     });
 
+    const handleClick = event => {
+        hiddenFileInput.current.click();
+    };
+
+    const handleChange = event => {
+        const fileUploaded = event.target.files[0];
+        setUserObject({
+            ...userObject,
+            profile: fileUploaded
+        });
+
+    };
 
     const handleSubmit = event => {
         event.preventDefault();
-        console.log(userObject);
         if (userObject.username === "" || userObject.email === "" || userObject.password === "") {
             setError("Please fill all the fields");
             setTimeout(() => {
@@ -54,19 +64,38 @@ const Register = () => {
             }, 3000);
             return;
         }
+        const formData = new FormData();
+        formData.append("username", userObject.username);
+        formData.append("email", userObject.email);
+        formData.append("password", userObject.password);
+        formData.append("fileUrl", userObject.profile);
+        axios.post('http://localhost:5000/register', formData)
+            .then(res => {
+                if (res.data.success) {
+                    setSuccess('Form submitted successfully!');
+                    setError('');
+                    setTimeout(() => {
+                        setSuccess('');
+                    }, 3000);
+                } else {
+                    setError(res.data.message);
+                    setSuccess('');
+                    setTimeout(() => {
+                        setError('');
+                    }, 3000);
+                }
+            })
+            .catch(error => {
+                if (error.response) {
+                    setError('Error: ' + error.response.data.message);
+                } else {
+                    setError('Error: ' + error.message);
+                }
+                setSuccess('');
+            });
 
-        setSuccess("User Registered Successfully");
     };
 
-
-    const handleClick = event => {
-        hiddenFileInput.current.click();
-    };
-
-    const handleChange = event => {
-        const fileUploaded = event.target.files[0];
-        setFile(fileUploaded);
-    };
 
     return (
         <form>
@@ -80,6 +109,7 @@ const Register = () => {
                     color: "gray.700",
                 }}
             >
+                {success && <p style={{ color: "green" }}>{success}</p>}
                 {error && <p style={{ color: "red" }}>{error}</p>}
                 <Flex>
                     <VisuallyHidden>User Name</VisuallyHidden>
@@ -108,7 +138,7 @@ const Register = () => {
                         })
                     }} />
                 </Flex>
-                {!file ? <Flex>
+                {!userObject.profile ? <Flex>
                     <VisuallyHidden>Profile Picture</VisuallyHidden>
                     <Button bg={'#ffffff'} fontWeight="light" color={'#555555'} _hover={{
                         background: "#ffffff",
@@ -132,7 +162,7 @@ const Register = () => {
                     <Input mt={0} ref={hiddenFileInput} onChange={handleChange} type="file" placeholder="profile" display="none" />
                 </Flex>
                 }
-                {file && <p fontWeight="500">{file.name}</p>}
+                {userObject.profile && <p fontWeight="500">{userObject.profile.name}</p>}
                 <Button bg={'#ffffff'} borderColor={"#ED2727"} color={'#ED2727'} _hover={{
                     background: "#Ed2727",
                     color: "#ffffff",

@@ -90,7 +90,7 @@ app.post('/register', upload.single('fileUrl'), async (req, res) => {
         res.cookie('token', token, { httpOnly: true });
 
         // Send the user object in the response
-        res.status(201).json({ user });
+        res.status(201).json({ user, success: 'User Registered' });
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: 'Internal Server Error' });
