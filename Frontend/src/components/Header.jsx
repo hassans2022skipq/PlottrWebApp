@@ -1,5 +1,7 @@
 
 import React from "react";
+import { useDispatch } from "react-redux";
+import { removeUser } from "../actions/userActions";
 import { useColorModeValue, Center, Heading } from "@chakra-ui/react";
 import { chakra, Flex, HStack, useDisclosure, Button, Avatar } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
@@ -12,6 +14,7 @@ import PostModal from "./PostModal";
 
 
 const Header = () => {
+  const dispatch = useDispatch();
   const bg = useColorModeValue("white", "gray.800");
   const OverlayOne = () => (
     <ModalOverlay
@@ -110,7 +113,12 @@ const Header = () => {
                   background: "transparent",
                   color: "#ED2727"
                 }
-                }>Logout</MenuItem>
+                }
+                  onClick={() => {
+                    dispatch(removeUser());
+                    localStorage.removeItem('user');
+                  }}
+                >Logout</MenuItem>
               </MenuList>
             </Menu>
           </HStack>

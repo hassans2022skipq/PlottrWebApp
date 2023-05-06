@@ -1,10 +1,18 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { useNavigate, useLocation } from "react-router-dom"
+import { setUser } from "../actions/userActions";
 import { SimpleGrid, Flex, Input, Button, VisuallyHidden } from "@chakra-ui/react";
 import { AiFillCamera } from 'react-icons/ai'
 import axios from "axios";
 
 const Register = () => {
+    const user = useSelector(state => state.user);
+    let location = useLocation();
+    let navigate = useNavigate();
     const hiddenFileInput = useRef(null);
+    const dispatch = useDispatch();
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
     const [userObject, setUserObject] = useState({
@@ -73,10 +81,13 @@ const Register = () => {
             .then(res => {
                 if (res.data.success) {
                     setSuccess('Form submitted successfully!');
+                    dispatch(setUser(res.data.user));
+                    localStorage.setItem('user', JSON.stringify(res.data.user));
                     setError('');
                     setTimeout(() => {
                         setSuccess('');
-                    }, 3000);
+                    }, 2000);
+
                 } else {
                     setError(res.data.message);
                     setSuccess('');
@@ -88,13 +99,29 @@ const Register = () => {
             .catch(error => {
                 if (error.response) {
                     setError('Error: ' + error.response.data.message);
+                    setSuccess('');
+                    setTimeout(() => {
+                        setError('');
+                    }, 3000);
                 } else {
                     setError('Error: ' + error.message);
+                    setSuccess('');
+                    setTimeout(() => {
+                        setError('');
+                    }
+                        , 3000);
                 }
                 setSuccess('');
             });
 
     };
+
+    useEffect(() => {
+        if (user) {
+            navigate('/home', { state: { from: location } });
+        }
+    }, [user, location]);
+
 
 
     return (
@@ -109,8 +136,8 @@ const Register = () => {
                     color: "gray.700",
                 }}
             >
-                {success && <p style={{ color: "green" }}>{success}</p>}
-                {error && <p style={{ color: "red" }}>{error}</p>}
+                {success && <p style={{ color: "green", textAlign: "center" }}>{success}</p>}
+                {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
                 <Flex>
                     <VisuallyHidden>User Name</VisuallyHidden>
                     <Input mt={0} type="text" placeholder="User Name" onChange={(e) => {
@@ -168,10 +195,10 @@ const Register = () => {
                     color: "#ffffff",
                     border: "1px solid #ED2727"
                 }} w="full" mt={4} py={2} onClick={handleSubmit}>
-                    Sign up for free
+                    Sign Up
                 </Button>
             </SimpleGrid >
-        </form>
+        </form >
     )
 
 }
