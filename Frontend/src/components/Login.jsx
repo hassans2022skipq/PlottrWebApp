@@ -1,9 +1,25 @@
 import { SimpleGrid, Flex, Input, Button, VisuallyHidden } from "@chakra-ui/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
+} from '@chakra-ui/react';
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { setUser } from "../actions/userActions";
+import { useNavigate, useLocation } from "react-router-dom"
+import { useSelector } from "react-redux";
 
 const Login = () => {
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(null);
+    const user = useSelector(state => state.user);
+    let location = useLocation();
+    let navigate = useNavigate();
+    const dispatch = useDispatch()
+
     const [userObject, setUserObject] = useState({
         email: "",
         password: ""
@@ -15,17 +31,44 @@ const Login = () => {
             setError("Invalid credentials");
             setTimeout(() => {
                 setError(null);
-            }, 3000);
+            }, 2000);
             return;
         }
         if (!userObject.email.includes("@")) {
             setError("Email must be valid");
             setTimeout(() => {
                 setError(null);
-            }, 3000);
+            }, 2000);
             return;
         }
+
+        axios.post("http://localhost:5000/login", userObject)
+            .then((res) => {
+                setSuccess("Logged in successfully");
+
+                setTimeout(() => {
+                    setSuccess(null);
+                }, 2000);
+                localStorage.setItem("user", JSON.stringify(res.data.user));
+                dispatch(setUser(res.data.user))
+            }
+            ).catch((err) => {
+                setError(err.response.data.message);
+                setTimeout(() => {
+                    setError(null);
+                }, 3000);
+            }
+            );
+
+
     }
+
+    useEffect(() => {
+        if (user) {
+            navigate('/home', { state: { from: location } });
+        }
+    }, [user, location]);
+
 
     return (
         <>
@@ -39,8 +82,15 @@ const Login = () => {
                     color: "gray.700",
                 }}
             >
-                {success && <p style={{ color: "green", textAlign: "center" }}>{success}</p>}
-                {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
+                {success && <Alert status="success">
+                    <AlertIcon />
+                    <AlertTitle color="#555555" mr={2}>{success}</AlertTitle>
+                </Alert>}
+
+                {error && <Alert status="error">
+                    <AlertIcon />
+                    <AlertTitle color="#555555" mr={2}>{error}</AlertTitle>
+                </Alert>}
                 <Flex>
                     <VisuallyHidden>Email Address</VisuallyHidden>
                     <Input mt={0} type="email" placeholder="Email Address" onChange={(e) => {

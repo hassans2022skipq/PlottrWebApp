@@ -6,6 +6,12 @@ import { setUser } from "../actions/userActions";
 import { SimpleGrid, Flex, Input, Button, VisuallyHidden } from "@chakra-ui/react";
 import { AiFillCamera } from 'react-icons/ai'
 import axios from "axios";
+import {
+    Alert,
+    AlertIcon,
+    AlertTitle,
+    AlertDescription,
+} from '@chakra-ui/react'
 
 const Register = () => {
     const user = useSelector(state => state.user);
@@ -80,7 +86,7 @@ const Register = () => {
         axios.post('http://localhost:5000/register', formData)
             .then(res => {
                 if (res.data.success) {
-                    setSuccess('Form submitted successfully!');
+                    setSuccess('User registered!');
                     dispatch(setUser(res.data.user));
                     localStorage.setItem('user', JSON.stringify(res.data.user));
                     setError('');
@@ -111,7 +117,6 @@ const Register = () => {
                     }
                         , 3000);
                 }
-                setSuccess('');
             });
 
     };
@@ -136,8 +141,15 @@ const Register = () => {
                     color: "gray.700",
                 }}
             >
-                {success && <p style={{ color: "green", textAlign: "center" }}>{success}</p>}
-                {error && <p style={{ color: "red", textAlign: "center" }}>{error}</p>}
+                {success && <Alert status="success">
+                    <AlertIcon />
+                    <AlertTitle color="#555555" mr={2}>{success}</AlertTitle>
+                </Alert>}
+
+                {error && <Alert status="error">
+                    <AlertIcon />
+                    <AlertTitle color="#555555" mr={2}>{error}</AlertTitle>
+                </Alert>}
                 <Flex>
                     <VisuallyHidden>User Name</VisuallyHidden>
                     <Input mt={0} type="text" placeholder="User Name" onChange={(e) => {
