@@ -12,7 +12,9 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>
-          <Route path="/" exact element={<Landing />} />
+          <Route path="/" exact element={
+            <Landing />
+          } />
           <Route path="/home" exact element={
             <ProtectedRoute>
               <Feed />

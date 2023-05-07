@@ -88,7 +88,7 @@ const Register = () => {
                 if (res.data.success) {
                     setSuccess('User registered!');
                     dispatch(setUser(res.data.user));
-                    localStorage.setItem('user', JSON.stringify(res.data.user));
+                    localStorage.setItem('user', JSON.stringify(res.data.user._id));
                     setError('');
                     setTimeout(() => {
                         setSuccess('');

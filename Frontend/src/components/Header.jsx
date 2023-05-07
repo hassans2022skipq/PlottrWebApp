@@ -11,6 +11,9 @@ import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
 import { Link } from "react-router-dom";
 import PostModal from "./PostModal";
+import Landing from "./Landing";
+
+
 
 
 const Header = () => {
@@ -117,6 +120,7 @@ const Header = () => {
                   onClick={() => {
                     dispatch(removeUser());
                     localStorage.removeItem('user');
+                    return <Landing />
                   }}
                 >Logout</MenuItem>
               </MenuList>

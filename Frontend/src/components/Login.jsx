@@ -49,7 +49,7 @@ const Login = () => {
                 setTimeout(() => {
                     setSuccess(null);
                 }, 2000);
-                localStorage.setItem("user", JSON.stringify(res.data.user));
+                localStorage.setItem("user", JSON.stringify(res.data.user._id));
                 dispatch(setUser(res.data.user))
             }
             ).catch((err) => {

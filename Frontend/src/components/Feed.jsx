@@ -1,10 +1,13 @@
 import React from 'react'
+
 import Layout from './Layout'
 import Post from './Post'
 import { Flex } from "@chakra-ui/react";
 import Trending from './Trending';
 
+
 const Feed = () => {
+    const userLoggedIn = JSON.parse(sessionStorage.getItem('user'));
     return (
         <Layout renderHeaderAndFooter={true}>
             <br />
