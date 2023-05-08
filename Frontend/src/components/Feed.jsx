@@ -4,10 +4,13 @@ import Layout from './Layout'
 import Post from './Post'
 import { Flex } from "@chakra-ui/react";
 import Trending from './Trending';
+import Cookies from 'js-cookie';
 
 
 const Feed = () => {
-    const userLoggedIn = JSON.parse(sessionStorage.getItem('user'));
+    const userLoggedIn = JSON.parse(sessionStorage.getItem('token'));
+    const token = Cookies.get('token');
+    console.log(token)
     return (
         <Layout renderHeaderAndFooter={true}>
             <br />

@@ -11,7 +11,6 @@ const storySchema = new mongoose.Schema({
   },
   fileUrl: {
     type: String,
-    required: true
   },
   isPublic: {
     type: Boolean,
@@ -22,10 +21,6 @@ const storySchema = new mongoose.Schema({
     ref: 'User',
   }
   ],
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
-  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'

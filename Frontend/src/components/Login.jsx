@@ -42,14 +42,18 @@ const Login = () => {
             return;
         }
 
-        axios.post("http://localhost:5000/login", userObject)
+        axios.post("http://localhost:5000/login", userObject, {
+            headers: {
+                "Content-Type": "application/json",
+            },
+            withCredentials: true
+        })
             .then((res) => {
                 setSuccess("Logged in successfully");
 
                 setTimeout(() => {
                     setSuccess(null);
                 }, 2000);
-                localStorage.setItem("user", JSON.stringify(res.data.user._id));
                 dispatch(setUser(res.data.user))
             }
             ).catch((err) => {

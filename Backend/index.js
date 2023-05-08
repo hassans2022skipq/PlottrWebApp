@@ -31,7 +31,10 @@ require('dotenv').config();
 const app = express();
 app.use(express.json());
 app.use(cookieParser());
-app.use(Cors());
+app.use(Cors({
+    origin: 'http://localhost:5173', // Replace with the URL of your React app
+    credentials: true,
+}));
 
 
 mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
@@ -87,7 +90,7 @@ app.post('/register', upload.single('fileUrl'), async (req, res) => {
 
         // Create a JWT and send it in a cookie
         const token = jwt.sign({ userId: user._id }, 'secret');
-        res.cookie('token', token, { httpOnly: true });
+        res.cookie('token', token, { httpOnly: false, sameSite: 'none' });
 
         // Send the user object in the response
         res.status(201).json({ user, success: 'User Registered' });
@@ -120,7 +123,7 @@ app.post('/login', async (req, res) => {
 
         // Create a JWT and send it in a cookie
         const token = jwt.sign({ userId: user._id }, 'secret');
-        res.cookie('token', token, { httpOnly: true });
+        res.cookie('token', token, { httpOnly: false, sameSite: 'none' });
 
         // Send the user object in the response
         res.status(200).json({ user });

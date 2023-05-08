@@ -9,15 +9,15 @@ import { Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
 import { AiOutlineSearch } from "react-icons/ai";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import PostModal from "./PostModal";
-import Landing from "./Landing";
 
 
 
 
 const Header = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const bg = useColorModeValue("white", "gray.800");
   const OverlayOne = () => (
     <ModalOverlay
@@ -119,8 +119,7 @@ const Header = () => {
                 }
                   onClick={() => {
                     dispatch(removeUser());
-                    localStorage.removeItem('user');
-                    return <Landing />
+                    navigate('/')
                   }}
                 >Logout</MenuItem>
               </MenuList>
