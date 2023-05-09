@@ -6,6 +6,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs'
 import serverUrl from "../config.js";
 
 
+
 function isImageOrVideo(url) {
     // Get the file extension from the URL
     const extension = url.split('.').pop().toLowerCase();
@@ -33,7 +34,7 @@ const Post = ({ post }) => {
                 <CardHeader>
                     <Flex spacing='4'>
                         <Flex flex='1' gap='4' alignItems='center' flexWrap='wrap'>
-                            <Avatar name='Segun Adebayo' src='https://bit.ly/sage-adebayo' />
+                            <Avatar name={post.user.username} src={serverUrl + post.user.fileUrl} />
 
                             <Box>
                                 <Heading size='sm'>{post.user.username}</Heading>
@@ -56,7 +57,8 @@ const Post = ({ post }) => {
                 {mediaType === 'image' ? (
                     <Image src={obj} w={'container.md'} h={'xs'} objectFit={'cover'} alt={post.title} />
                 ) : mediaType === 'video' ? (
-                    <video src={obj} w={'container.md'} h={'xs'} controls autoPlay="false" />
+                    <video src={obj} w={'container.md'} h={'xs'} controls onCanPlay={false} />
+
                 ) : null}
 
                 <CardFooter

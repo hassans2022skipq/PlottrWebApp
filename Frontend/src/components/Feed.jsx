@@ -45,12 +45,19 @@ const Feed = () => {
         })
             .then(res => {
                 setPost(res.data)
-                // console.log(res.data)
+                console.log(res.data)
                 // setComments(res.data.comments)
                 setLikes(res.data.upvotes)
             })
             .catch(err => console.log(err))
     }, [])
+
+    // clean up
+    // useEffect(() => {
+    //     return () => {
+    //         setPost([])
+    //     }
+    // }, [])
     return (
         <Layout renderHeaderAndFooter={true}>
             <br />
