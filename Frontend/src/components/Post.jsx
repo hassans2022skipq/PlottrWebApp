@@ -1,11 +1,32 @@
 
 // Imports
-import { Avatar, Box, Center, Button, Card, CardBody, CardFooter, CardHeader, Flex, Heading, IconButton, Image, Text } from '@chakra-ui/react'
-import { BiChat, BiLike, BiShare } from 'react-icons/bi'
+import { Avatar, Box, Button, Card, CardBody, CardFooter, CardHeader, Flex, Heading, IconButton, Image, Text } from '@chakra-ui/react'
+import { BiChat, BiLike } from 'react-icons/bi'
 import { BsThreeDotsVertical } from 'react-icons/bs'
+import serverUrl from "../config.js";
 
+
+function isImageOrVideo(url) {
+    // Get the file extension from the URL
+    const extension = url.split('.').pop().toLowerCase();
+
+    // Check if it's an image file
+    if (extension === 'jpg' || extension === 'jpeg' || extension === 'png' || extension === 'gif') {
+        return 'image';
+    }
+
+    // Check if it's a video file
+    if (extension === 'mp4' || extension === 'mov' || extension === 'avi') {
+        return 'video';
+    }
+
+    // If it's neither an image nor a video, return null or handle as desired
+    return null;
+}
 // Component
-const Post = () => {
+const Post = ({ post }) => {
+    const obj = serverUrl + post.fileUrl
+    const mediaType = isImageOrVideo(obj)
     return (
         <>
             <Card maxW='sm' my={6}>
@@ -15,8 +36,8 @@ const Post = () => {
                             <Avatar name='Segun Adebayo' src='https://bit.ly/sage-adebayo' />
 
                             <Box>
-                                <Heading size='sm'>Segun Adebayo</Heading>
-                                <Text>Creator, Chakra UI</Text>
+                                <Heading size='sm'>{post.user.username}</Heading>
+                                <Text>{post.title}</Text>
                             </Box>
                         </Flex>
                         <IconButton
@@ -29,16 +50,14 @@ const Post = () => {
                 </CardHeader>
                 <CardBody>
                     <Text>
-                        With Chakra UI, I wanted to sync the speed of development with the speed
-                        of design. I wanted the developer to be just as excited as the designer to
-                        create a screen.
+                        {post.content}
                     </Text>
                 </CardBody>
-                <Image
-                    objectFit='cover'
-                    src='https://images.unsplash.com/photo-1531403009284-440f080d1e12?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1770&q=80'
-                    alt='Chakra UI'
-                />
+                {mediaType === 'image' ? (
+                    <Image src={obj} w={'container.md'} h={'xs'} objectFit={'cover'} alt={post.title} />
+                ) : mediaType === 'video' ? (
+                    <video src={obj} w={'container.md'} h={'xs'} controls autoPlay="false" />
+                ) : null}
 
                 <CardFooter
                     justify='space-between'

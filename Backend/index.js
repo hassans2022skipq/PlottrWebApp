@@ -1,6 +1,7 @@
 // app.js
 
 const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const bcrypt = require('bcrypt');
@@ -30,6 +31,7 @@ require('dotenv').config();
 
 const app = express();
 app.use(express.json());
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(cookieParser());
 app.use(Cors({
     origin: 'http://localhost:5173', // Replace with the URL of your React app
