@@ -10,7 +10,6 @@ import Cookies from 'js-cookie';
 const Feed = () => {
     const userLoggedIn = JSON.parse(sessionStorage.getItem('token'));
     const token = Cookies.get('token');
-    console.log(token)
     return (
         <Layout renderHeaderAndFooter={true}>
             <br />

@@ -66,6 +66,13 @@ const PostModal = () => {
             }, 3000);
             return;
         }
+        if (!file) {
+            setError("Please select an image");
+            setTimeout(() => {
+                setError(null);
+            }, 3000);
+            return;
+        }
         // if (!supportedFileTypes(file)) {
         //     setError("File type not supported");
         //     setTimeout(() => {
@@ -162,7 +169,7 @@ const PostModal = () => {
                         </Flex>
                         <Flex>
                             <VisuallyHidden>Content</VisuallyHidden>
-                            <Textarea mt={0} type="text" placeholder="Content" onChange={
+                            <Textarea mt={0} type="text" placeholder="Content" color="#555555" onChange={
                                 (e) => {
                                     setPostObject({
                                         ...postOject,
@@ -241,7 +248,7 @@ const PostModal = () => {
                             </div>
                         </Flex>
                         }
-                        {file && <p fontWeight="500">{file.name}</p>}
+                        {file && <Text color="#777777" fontWeight="500">{file.name}</Text>}
 
                     </SimpleGrid >
                 </ModalBody>

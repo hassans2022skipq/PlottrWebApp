@@ -11,6 +11,7 @@ const storySchema = new mongoose.Schema({
   },
   fileUrl: {
     type: String,
+    default: ''
   },
   isPublic: {
     type: Boolean,
