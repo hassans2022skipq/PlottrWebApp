@@ -63,6 +63,7 @@ const Post = ({ post }) => {
 
                 <CardFooter
                     justify='space-between'
+                    alignItems='center'
                     flexWrap='wrap'
                     sx={{
                         '& > button': {
@@ -70,12 +71,16 @@ const Post = ({ post }) => {
                         },
                     }}
                 >
+                    <Text color="blue">
+                        {post.upvotes.length}
+                    </Text>
                     <Button flex='1' variant='ghost' leftIcon={<BiLike />}>
                         Upvote
                     </Button>
                     <Button flex='1' variant='ghost' leftIcon={<BiChat />}>
                         Comment
                     </Button>
+
                 </CardFooter>
             </Card>
         </>

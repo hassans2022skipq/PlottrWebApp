@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { removeUser } from "../actions/userActions";
 import { useColorModeValue, Center, Heading } from "@chakra-ui/react";
 import { chakra, Flex, HStack, useDisclosure, Button, Avatar } from "@chakra-ui/react";
@@ -11,12 +11,14 @@ import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";
 import PostModal from "./PostModal";
+import SearchBar from "./SearchBar";
 
 
 
 
 const Header = () => {
   const dispatch = useDispatch();
+  const user = useSelector((state) => state.user);
   const navigate = useNavigate();
   const bg = useColorModeValue("white", "gray.800");
   const OverlayOne = () => (
@@ -54,12 +56,7 @@ const Header = () => {
             spacing={3}
           >
             <Center hideBelow='lg'>
-              <InputGroup w={500} my={4}>
-                <InputLeftElement pointerEvents="none">
-                  <AiOutlineSearch />
-                </InputLeftElement>
-                <Input bg={"#e2e2e2"} type="tel" placeholder="Search for stories, friends and more..." />
-              </InputGroup>
+              <SearchBar />
             </Center>
           </HStack>
           <HStack
@@ -90,8 +87,9 @@ const Header = () => {
               }>
                 <Avatar
                   size="md"
-                  name="Dan Abrahmov"
-                  src="https://bit.ly/dan-abramov"
+                  border="1px solid #dddddd"
+                  name={user.username}
+                  src={user.fileUrl}
                 />
               </MenuButton>
               <MenuList>
@@ -128,12 +126,7 @@ const Header = () => {
         </Flex>
       </chakra.header>
       <Center bg={"#e2e2e2"} hideFrom='lg'>
-        <InputGroup w="95%" my={4}>
-          <InputLeftElement pointerEvents="none">
-            <AiOutlineSearch />
-          </InputLeftElement>
-          <Input bg={"white"} type="tel" placeholder="Search for stories, friends and more... " />
-        </InputGroup>
+        <SearchBar />
       </Center>
     </React.Fragment >
   );

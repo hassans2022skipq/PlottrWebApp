@@ -140,14 +140,13 @@ const Register = () => {
                     color: "gray.700",
                 }}
             >
-                {success && <Alert status="success">
-                    <AlertIcon />
-                    <AlertTitle color="#555555" mr={2}>{success}</AlertTitle>
-                </Alert>}
-
                 {error && <Alert status="error">
                     <AlertIcon />
-                    <AlertTitle color="#555555" mr={2}>{error}</AlertTitle>
+                    <AlertTitle mr={2}>{error}</AlertTitle>
+                </Alert>}
+                {success && <Alert status="success">
+                    <AlertIcon />
+                    <AlertTitle mr={2}>{success}</AlertTitle>
                 </Alert>}
                 <Flex>
                     <VisuallyHidden>User Name</VisuallyHidden>

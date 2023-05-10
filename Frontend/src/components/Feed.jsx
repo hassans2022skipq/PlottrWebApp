@@ -45,7 +45,7 @@ const Feed = () => {
         })
             .then(res => {
                 setPost(res.data)
-                console.log(res.data)
+                // console.log(res.data)
                 // setComments(res.data.comments)
                 setLikes(res.data.upvotes)
             })

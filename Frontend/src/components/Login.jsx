@@ -86,18 +86,17 @@ const Login = () => {
                     color: "gray.700",
                 }}
             >
-                {success && <Alert status="success">
-                    <AlertIcon />
-                    <AlertTitle color="#555555" mr={2}>{success}</AlertTitle>
-                </Alert>}
-
                 {error && <Alert status="error">
                     <AlertIcon />
-                    <AlertTitle color="#555555" mr={2}>{error}</AlertTitle>
+                    <AlertTitle mr={2}>{error}</AlertTitle>
+                </Alert>}
+                {success && <Alert status="success">
+                    <AlertIcon />
+                    <AlertTitle mr={2}>{success}</AlertTitle>
                 </Alert>}
                 <Flex>
                     <VisuallyHidden>Email Address</VisuallyHidden>
-                    <Input mt={0} type="email" placeholder="Email Address" onChange={(e) => {
+                    <Input mt={0} type="email" _autofill={true} placeholder="Email Address" onChange={(e) => {
                         setUserObject({
                             ...userObject,
                             email: e.target.value
