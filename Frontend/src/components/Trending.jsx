@@ -23,8 +23,8 @@ const Trending = () => {
             <Flex minW="90%" bg={"#fff"} border="1px solid #ddd" justifyContent={"center"}>
 
                 <Text size="sm" p={4} bgClip="text"
-                    bgGradient="linear(to-r, green.400,purple.500)"> Trending - {
-                        trending.length === 0 ? trending.title : "meehhhh, No Trending Post"
+                    bgGradient="linear(to-r, green.400,purple.500)"> {
+                        trending.length === 0 ? Trending - trending.title : "meehhhh, No Trending Post..."
                     } </Text>
             </Flex>
         </Center>

@@ -21,7 +21,7 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/search/:query" exact element={<Result />} />
-          <Route path="/profile/:id" exact element={<Profile />} />
+          <Route path="/profile" exact element={<Profile />} />
           <Route path="/story/:id" exact element={<Feed />} />
           <Route path="/story/:id/comments" exact element={<Feed />} />
           <Route path="*" element={<NotFound />} />

@@ -17,11 +17,11 @@ const SearchBar = () => {
     }
     return (
         <form onSubmit={handleSubmit}>
-            <InputGroup w={500} my={4} >
+            <InputGroup my={4}>
                 <InputLeftElement pointerEvents="none">
                     <AiOutlineSearch />
                 </InputLeftElement>
-                <Input bg={"#e2e2e2"} type="text" placeholder="Search for stories, friends and more..." onChange={handleSearch} value={search} />
+                <Input bg={"#e2e2e2"} type="text" placeholder="Search for stories, friends and more..." w={'sm'} onChange={handleSearch} value={search} />
             </InputGroup>
         </form>
     )

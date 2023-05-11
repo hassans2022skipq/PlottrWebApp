@@ -101,7 +101,7 @@ const Header = () => {
                   }
                   }>Home</MenuItem>
                 </Link>
-                <Link to="/profile">
+                <Link to='/profile'>
                   <MenuItem _hover={{
                     border: "1px solid #ffffff",
                     background: "transparent",

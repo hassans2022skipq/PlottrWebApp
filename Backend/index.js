@@ -143,8 +143,9 @@ app.get('/logout', protect, (req, res) => {
 
 // Get User Details
 app.get('/user', protect, async (req, res) => {
+    // const { id } = req.params;
     try {
-        if (!req.user) {
+        if (!req.userId) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
         const user = await User.findById(req.userId).select('-password');

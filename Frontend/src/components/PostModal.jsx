@@ -111,7 +111,7 @@ const PostModal = () => {
                 setSuccess("Post created successfully");
                 setTimeout(() => {
                     setSuccess(null);
-                    navigate('/')
+                    navigate('/home')
                 }, 3000);
                 setFile("");
                 setPostObject({
@@ -160,7 +160,7 @@ const PostModal = () => {
                     >
                         <Flex>
                             <VisuallyHidden>Title</VisuallyHidden>
-                            <Input mt={0} type="text" placeholder="Title" onChange={(e) => {
+                            <Input mt={0} type="text" placeholder="Title" value={postOject.title} onChange={(e) => {
                                 setPostObject({
                                     ...postOject,
                                     title: e.target.value
@@ -169,7 +169,7 @@ const PostModal = () => {
                         </Flex>
                         <Flex>
                             <VisuallyHidden>Content</VisuallyHidden>
-                            <Textarea mt={0} type="text" placeholder="Content" color="#555555" onChange={
+                            <Textarea mt={0} type="text" placeholder="Content" color="#555555" value={postOject.content} onChange={
                                 (e) => {
                                     setPostObject({
                                         ...postOject,

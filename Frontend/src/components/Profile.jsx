@@ -1,14 +1,31 @@
 import React, { useEffect, useState } from 'react'
 import Layout from './Layout'
-import { Flex, Avatar, Text, Heading } from '@chakra-ui/react'
+import { Flex, Avatar, Text, Heading, Center } from '@chakra-ui/react'
 import Post from './Post'
 import { useSelector } from 'react-redux'
+import axios from 'axios'
 
 
 const Profile = () => {
     const [quote, setQuote] = useState("")
+    const [posts, setPosts] = useState([])
     const user = useSelector(state => state.user)
-    console.log(user)
+
+    useEffect(() => {
+        axios.get('http://localhost:5000/user', {
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => {
+                setPosts(res.data.stories)
+                console.log(res.data)
+            })
+            .catch(err => console.log(err))
+    }, [])
+
+
     useEffect(() => {
         fetch('https://api.quotable.io/random')
             .then((res) => res.json())
@@ -28,14 +45,19 @@ const Profile = () => {
                     name="Dan Abrahmov"
                     src="https://bit.ly/dan-abramov"
                 />
-                <Heading size="md" mt="2" mb="4" color="#333333">
-                    {user ? user : "User Name"}
+                <Heading size="lg" mt="2" mb="4" color="#333333">
+                    {user ? "@" + user.username : "User Name"}
                 </Heading>
             </Flex>
+            <Center>
+                <Text size="md" mt="2" mb="4" color="#777777">
+                    - Your Posts -
+                </Text>
+            </Center>
             <Flex pb="12" gap="8" align="center" justify="center" w="100%" flexWrap={'wrap'} maxW={{ base: "100%", md: "100%", lg: "100%", xl: "100%" }}>
-
-                <Post />
-                <Post />
+                {posts.map((post) => (
+                    <Post key={post._id} post={post} />
+                ))}
             </Flex>
         </Layout>
     )

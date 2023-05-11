@@ -23,7 +23,7 @@ const Result = () => {
     return (
         <Layout renderHeaderAndFooter={true}>
             <Flex direction="column" w="100%" py={12} color="#555555" justifyContent="center" textAlign="center">
-                {result.stories.length === 0 ?
+                {result.length == 0 ?
                     <div style={{ textAlign: "center" }}>
                         <h1 style={{ fontSize: "20px" }}>Oops, No Results Found</h1>
                     </div>
