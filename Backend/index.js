@@ -184,7 +184,7 @@ app.post('/stories', upload.single('fileUrl'), protect, async (req, res) => {
 app.get('/stories', protect, async (req, res) => {
     try {
         // Find all public stories
-        const publicStories = await Story.find({ isPublic: true }).populate('user', '-password');
+        const publicStories = await Story.find({ isPublic: true }).sort({ $natural: -1 }).populate('user', '-password');
 
         res.json(publicStories);
     } catch (err) {
@@ -297,9 +297,10 @@ app.get('/most-liked', async (req, res) => {
 
 
 // Upvote a Story
-app.put('/stories/:id/upvote', protect, async (req, res) => {
+app.put('/stories/:id/upvote', async (req, res) => {
+    const { id } = req.params;
     try {
-        const story = await Story.findById(req.params.id);
+        const story = await Story.findById(id);
         if (!story) {
             return res.status(404).json({ message: 'Story not found' });
         }
@@ -319,7 +320,7 @@ app.put('/stories/:id/upvote', protect, async (req, res) => {
 });
 
 // Downvote a Story
-app.put('/stories/:id/downvote', protect, async (req, res) => {
+app.put('/stories/:id/downvote', async (req, res) => {
     try {
         const story = await Story.findById(req.params.id);
         if (!story) {

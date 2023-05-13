@@ -5,8 +5,6 @@ import { removeUser } from "../actions/userActions";
 import { useColorModeValue, Center, Heading } from "@chakra-ui/react";
 import { chakra, Flex, HStack, useDisclosure, Button, Avatar } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
-import { Input, InputGroup, InputLeftElement } from "@chakra-ui/react";
-import { AiOutlineSearch } from "react-icons/ai";
 import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
 import { Modal, ModalOverlay } from "@chakra-ui/react";
 import { Link, useNavigate } from "react-router-dom";

@@ -11,6 +11,7 @@ const Feed = () => {
     const [isLiked, setIsLiked] = useState(false)
     const [post, setPost] = useState([
         {
+            _id: '',
             title: '',
             content: '',
             fileUrl: '',
@@ -50,7 +51,7 @@ const Feed = () => {
                 setLikes(res.data.upvotes)
             })
             .catch(err => console.log(err))
-    }, [])
+    }, [post])
 
     // clean up
     // useEffect(() => {
@@ -67,7 +68,7 @@ const Feed = () => {
             <Flex pb="12" gap="8" align="center" justify="center" w="100%" flexWrap={'wrap'} maxW={{ base: "100%", md: "100%", lg: "100%", xl: "100%" }}>
 
                 {post.map((post, index) => (
-                    <Post key={index} post={post} />
+                    <Post key={post._id} post={post} />
                 ))}
             </Flex>
 

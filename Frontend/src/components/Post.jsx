@@ -1,9 +1,22 @@
 
 // Imports
-import { Avatar, Box, Button, Card, CardBody, CardFooter, CardHeader, Flex, Heading, IconButton, Image, Text } from '@chakra-ui/react'
+
+import { useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
+import { useColorModeValue, Avatar, Box, Button, Card, CardBody, CardFooter, CardHeader, Flex, Heading, IconButton, Image, Text } from '@chakra-ui/react'
 import { BiChat, BiLike } from 'react-icons/bi'
 import { BsThreeDotsVertical } from 'react-icons/bs'
 import serverUrl from "../config.js";
+import axios from 'axios'
+import { Modal, ModalOverlay } from "@chakra-ui/react";
+import PostModal from "./PostModal";
+import { useDisclosure } from "@chakra-ui/react"
+import { Link, useNavigate } from "react-router-dom";
+import { Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
+import { useDispatch } from 'react-redux'
+
+
+
 
 
 
@@ -26,8 +39,45 @@ function isImageOrVideo(url) {
 }
 // Component
 const Post = ({ post }) => {
+    const bg = useColorModeValue("white", "gray.800");
+    const OverlayOne = () => (
+        <ModalOverlay
+            bg='blackAlpha.600'
+            backdropFilter='blur(10px) '
+            backdropInvert='80%'
+        />
+    )
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const [overlay, setOverlay] = useState(<OverlayOne />)
     const obj = serverUrl + post.fileUrl
     const mediaType = isImageOrVideo(obj)
+    const user = useSelector(state => state.user)
+    const [toggle, setToggle] = useState(false)
+    const handleVote = () => {
+        if (toggle) {
+            axios.put(serverUrl + `/stories/${post._id}/downvote`, {
+                withCredentials: true,
+            }).then(res => {
+                if (res.data.message) {
+                    setToggle(false)
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+
+            })
+        } else {
+            axios.put(serverUrl + `/stories/${post._id}/upvote`, {
+                withCredentials: true,
+            }).then(res => {
+                if (res.data.message) {
+                    setToggle(true)
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+            })
+        }
+    }
+
     return (
         <>
             <Card maxW='sm' my={6}>
@@ -41,12 +91,40 @@ const Post = ({ post }) => {
                                 <Text>{post.title}</Text>
                             </Box>
                         </Flex>
-                        <IconButton
-                            variant='ghost'
-                            colorScheme='gray'
-                            aria-label='See menu'
-                            icon={<BsThreeDotsVertical />}
-                        />
+                        {user._id === post.user._id ? (
+                            <Menu>
+                                <MenuButton _hover={{
+                                    border: "1px solid #ffffff",
+                                    background: "transparent"
+                                }
+                                }>
+                                    <IconButton
+                                        aria-label='Options'
+                                        icon={<BsThreeDotsVertical />}
+                                        variant='ghost'
+                                    />
+                                </MenuButton>
+                                <MenuList>
+                                    <Link to="/home">
+                                        <MenuItem _hover={{
+                                            border: "1px solid #ffffff",
+                                            background: "transparent",
+                                            color: "#ED2727"
+                                        }
+                                        }>Home</MenuItem>
+                                    </Link>
+                                    <Link to='/profile'>
+                                        <MenuItem _hover={{
+                                            border: "1px solid #ffffff",
+                                            background: "transparent",
+                                            color: "#ED2727"
+                                        }
+                                        }>Profile</MenuItem>
+                                    </Link>
+
+                                </MenuList>
+                            </Menu>
+                        ) : null}
                     </Flex>
                 </CardHeader>
                 <CardBody>
@@ -74,12 +152,20 @@ const Post = ({ post }) => {
                     <Text color="blue">
                         {post.upvotes.length}
                     </Text>
-                    <Button flex='1' variant='ghost' leftIcon={<BiLike />}>
+                    <Button flex='1' variant='ghost' color={toggle
+                        ? "blue" : "#000000"} leftIcon={<BiLike />} onClick={handleVote}>
                         Upvote
                     </Button>
-                    <Button flex='1' variant='ghost' leftIcon={<BiChat />}>
+                    <Button flex='1' variant='ghost' leftIcon={<BiChat />} onClick={() => {
+                        setOverlay(<OverlayOne />)
+                        onOpen()
+                    }}>
                         Comment
                     </Button>
+                    <Modal isCentered isOpen={isOpen} onClose={onClose}>
+                        {overlay}
+                        <PostModal />
+                    </Modal>
 
                 </CardFooter>
             </Card>
